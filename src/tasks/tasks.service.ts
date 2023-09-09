@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ITask, TaskStatus } from './task.model';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -54,8 +55,12 @@ export class TasksService {
 
   getTaskById(id: number) {
     const indexTask = this.tasks.findIndex((task) => task.id === id);
-    if (indexTask < 0)
-      return new HttpException('task not found!', HttpStatus.NOT_FOUND);
+    if (indexTask < 0) {
+      return new HttpException(
+        `task not found with id ${id}`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     return { ...this.tasks[indexTask] };
   }
@@ -72,13 +77,15 @@ export class TasksService {
     return newTask;
   }
 
-  updateTasksById(id: number, newTask) {
-    const isTaskFalid = this.getTaskById(id);
-    if (!isTaskFalid)
-      return new HttpException('task not found!', HttpStatus.NOT_FOUND);
-
+  updateTasksById(id: number, newTask: UpdateTaskDto) {
     const indexTask = this.tasks.findIndex((task) => task.id === id);
-    this.tasks[indexTask] = { id, ...isTaskFalid, ...newTask };
+    if (indexTask < 0)
+      return new HttpException(
+        `task not found with id ${id}!`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    this.tasks[indexTask] = { id, ...this.tasks[indexTask], ...newTask };
     return this.tasks[indexTask];
   }
 

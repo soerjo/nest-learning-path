@@ -11,6 +11,7 @@ import {
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -35,10 +36,7 @@ export class TasksController {
   }
 
   @Patch(':id')
-  patchSomeTask(
-    @Param('id') id: string,
-    @Body() body: Record<string, unknown>,
-  ) {
+  patchSomeTask(@Param('id') id: string, @Body() body: UpdateTaskDto) {
     return this.taskService.updateTasksById(+id, body);
   }
 
